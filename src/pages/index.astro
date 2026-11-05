@@ -1,17 +1,87 @@
 ---
+import { getCollection } from 'astro:content';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
 
+const issues = (await getCollection('newsletter')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const latestIssue = issues[0];
+const recentPosts = posts.slice(0, 3);
 ---
-
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" href="/favicon.ico" />
+  <title>Hypn0s Cyber</title>
+</head>
+<body>
+  <Header />
+  <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
+
+    <section style="text-align:center;">
+      <div style="text-align:center;">
+        <pre class="ascii-temple" style="display:inline-block; text-align:left; margin:0 0 1.5rem;">
+          /\
+        /    \
+      /        \
+    /            \
+   ════════════════
+    ┃  ┃  ┃  ┃  ┃
+    ┃  ┃  ┃  ┃  ┃
+   ════════════════</pre>
+      </div>
+      <h1 style="margin:0 0 0.5rem;">Hypn0s Cyber</h1>
+      <p class="meta" style="text-align:center;">watching while the network dreams.</p>
+      <p style="text-align:center;">
+        Cyber dispatches, CTF write-ups and hands-on security projects, for people
+        who learn by following someone doing the work.
+      </p>
+    </section>
+
+    {latestIssue && (
+      <>
+        <p class="section-label">Latest issue</p>
+        <a href={`/newsletter/${latestIssue.id}/`} class="feature-card">
+          {latestIssue.data.cover && <img src={latestIssue.data.cover} alt="" />}
+          <p class="meta">
+            {latestIssue.data.date.toLocaleDateString('en-CA')}
+            {latestIssue.data.readingTime && ` · ${latestIssue.data.readingTime} min read`}
+          </p>
+          <h2>{latestIssue.data.title}</h2>
+          {latestIssue.data.summary && <p>{latestIssue.data.summary}</p>}
+        </a>
+        <p style="margin-top:1rem;"><a href="/newsletter/">All issues →</a></p>
+      </>
+    )}
+
+    <p class="section-label">Latest from the blog</p>
+    {recentPosts.map((post) => (
+      <a href={`/blog/${post.id}/`} class="post-card">
+        {post.data.cover && <img src={post.data.cover} alt="" />}
+        <div>
+          <p class="meta">
+            {post.data.date.toLocaleDateString('en-CA')}
+            {post.data.readingTime && ` · ${post.data.readingTime} min read`}
+          </p>
+          <h2>{post.data.title}</h2>
+        </div>
+      </a>
+    ))}
+    <p><a href="/blog/">All posts →</a></p>
+
+    <div class="divider">◆ ◆ ◆</div>
+    <p style="text-align:center;">
+      Follow the dispatch on <a href="https://www.linkedin.com/company/hypn0s-cyber/">LinkedIn</a>
+    </p>
+
+  </main>
+  <Footer />
+</body>
 </html>

@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+
+const posts = (await getCollection('newsletter')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Newsletter — Hypn0s Cyber</title>
+</head>
+<body>
+  <Header />
+  <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
+    <h1>Newsletter</h1>
+    <div class="divider">◆ ◆ ◆</div>
+    {posts.map((post) => (
+      <a href={`/newsletter/${post.id}/`} style="display:flex; gap:1rem; align-items:center; margin-bottom:2rem; color:inherit;">
+        {post.data.cover && (
+          <img src={post.data.cover} alt="" style="width:100px; height:70px; object-fit:cover; border-radius:4px; border:1px solid var(--border); flex-shrink:0;" />
+        )}
+        <div>
+          <p class="meta">{post.data.date.toLocaleDateString('en-CA')}</p>
+          <h2 style="margin-top:0.3rem;">{post.data.title}</h2>
+        </div>
+      </a>
+    ))}
+  </main>
+  <Footer />
+</body>
+</html>

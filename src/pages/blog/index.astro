@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog — Hypn0s Cyber</title>
+</head>
+<body>
+  <Header />
+  <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
+    <h1>Blog</h1>
+    <div class="divider">◆ ◆ ◆</div>
+    {posts.map((post) => (
+      <a href={`/blog/${post.id}/`} class="post-card">
+        {post.data.cover && <img src={post.data.cover} alt="" />}
+        <div>
+          <p class="meta">
+            {post.data.date.toLocaleDateString('en-CA')}
+            {post.data.readingTime && ` · ${post.data.readingTime} min read`}
+          </p>
+          <h2>{post.data.title}</h2>
+        </div>
+      </a>
+    ))}
+  </main>
+  <Footer />
+</body>
+</html>
